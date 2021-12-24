@@ -23,7 +23,11 @@ This is about installing a k8s cluster on a set of raspberry pies with k3s and c
    ln -s /etc/rancher/k3s/k3s.yaml .kube/config
    cilium install
    ```
- 8. fetch Kubeconfig: `scp ubuntu@node-0001.pinetes:/etc/rancher/k3s/k3s.yaml ./pinetes-kubeconfig` and update address `gsed -i 's/127.0.0.1/node-0001.pinetes/g' pinetes-kubeconfig`
+ 8. fetch Kubeconfig: 
+    ```shell
+    scp ubuntu@node-0001.pinetes:/etc/rancher/k3s/k3s.yaml ./pinetes-kubeconfig
+    gsed -i 's/127.0.0.1/node-0001.pinetes/g' pinetes-kubeconfig
+    
    
    
  ## cleanup
