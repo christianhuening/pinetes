@@ -27,14 +27,14 @@ for an initial install, proceed here:
    ```
 3. fetch Kubeconfig:
     ```shell
-    scp ubuntu@node-0001.pinetes:/etc/rancher/k3s/k3s.yaml ./pinetes-kubeconfig
-    gsed -i 's/127.0.0.1/node-0001.pinetes/g' pinetes-kubeconfig
+    scp ubuntu@master-0001.pinetes:/etc/rancher/k3s/k3s.yaml ./pinetes-kubeconfig
+    gsed -i 's/127.0.0.1/master-0001.pinetes/g' pinetes-kubeconfig
     ```
 
 for worker nodes here:
 1. Add Worker Nodes: Repeat steps 1-8 and then run the following:
    1. Fetch the Join token from node-0001: `cat /var/lib/rancher/k3s/server/node-token` and save it as NODE_TOKEN
-   2. `curl -sfL https://get.k3s.io | K3S_URL='https://node-0001.pinetes:6443' K3S_TOKEN=${NODE_TOKEN} sh -`
+   2. `curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL=latest K3S_URL='https://master-0001.pinetes:6443' K3S_TOKEN=${NODE_TOKEN} sh -`
 
  ## cleanup
 
