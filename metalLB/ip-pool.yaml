@@ -1,0 +1,8 @@
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: home-net
+  namespace: metallb-system
+spec:
+  addresses:
+  - 192.168.178.181-192.168.178.199
