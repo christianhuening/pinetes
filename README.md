@@ -41,8 +41,7 @@ for worker nodes here:
 
  1. /usr/local/bin/k3s-uninstall.sh
 
+## Install MetalLB
 
-## rPI HomeLab LB setup
-
-<https://opensource.com/article/20/7/homelab-metallb>
-
+1. `helm install --wait -ns metallb-system bmetallb metallb/metallb`
+2. `k apply -f metallb/pool.yaml`
