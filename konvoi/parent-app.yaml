@@ -1,0 +1,13 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: main
+  namespace: argocd
+spec:
+  destination:
+    namespace: argocd
+    server: https://kubernetes.default.svc
+  project: konvoi
+  source:
+    path: ./konvoi/argo-apps
+    repoURL: https://github.com/christianhuening/pinetes.git

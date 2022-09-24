@@ -45,3 +45,7 @@ for worker nodes here:
 
 1. `helm install --wait -ns metallb-system bmetallb metallb/metallb`
 2. `k apply -f metallb/pool.yaml`
+
+## Install linkerd with argocd
+
+Guide: <https://linkerd.io/2.12/tasks/gitops/>
