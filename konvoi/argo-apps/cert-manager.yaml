@@ -7,7 +7,7 @@ spec:
   project: konvoi
   source:
     chart: cert-manager
-    repoURL: https://github.com/christianhuening/pinetes.git
+    repoURL: https://charts.jetstack.io
     targetRevision: v1.9.1
     helm:
       parameters:
