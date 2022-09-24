@@ -38,3 +38,4 @@ spec:
   - https://github.com/BuoyantIO/emojivoto.git
   - https://helm.linkerd.io/stable
   - https://bitnami-labs.github.io/sealed-secrets
+  - https://github.com/christianhuening/pinetes.git

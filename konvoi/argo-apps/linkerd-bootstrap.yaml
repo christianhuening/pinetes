@@ -9,5 +9,5 @@ spec:
     server: https://kubernetes.default.svc
   project: konvoi
   source:
-    path: gitops/resources/linkerd
-    repoURL: git://git-server.scm:9418/linkerd-examples.git
+    path: konvoi/resources/linkerd
+    repoURL: https://github.com/christianhuening/pinetes.git

@@ -7,8 +7,8 @@ spec:
   project: konvoi
   source:
     chart: linkerd-control-plane
-    repoURL: https://helm.linkerd.io/stable
-    targetRevision: 2.12.0
+    repoURL: https://github.com/christianhuening/pinetes.git
+    targetRevision: 2.12.1
     helm:
       parameters:
       - name: identityTrustAnchorsPEM
