@@ -1,0 +1,11 @@
+# from https://github.com/tinkerbell/tink/blob/main/config/crd/examples/workflow.yaml
+apiVersion: "tinkerbell.org/v1alpha1"
+kind: Workflow
+metadata:
+  name: wf-node-01
+  namespace: default
+spec:
+  templateRef: ubuntu-focal
+  hardwareRef: node-01
+  hardwareMap:
+    device_1: e4:5f:01:83:d3:b6
