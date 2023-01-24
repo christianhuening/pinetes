@@ -23,7 +23,7 @@ spec:
         version: "20.04"
   interfaces:
     - dhcp:
-        arch: arm64
+        arch: "aarch64"
         hostname: node-01
         ip:
           address: 192.168.178.72
@@ -34,7 +34,7 @@ spec:
         name_servers:
           - 192.168.178.49
           - 8.8.8.8
-        uefi: true
+        uefi: false
       netboot:
         allowPXE: true
         allowWorkflow: true

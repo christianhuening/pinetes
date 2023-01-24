@@ -36,7 +36,17 @@ for worker nodes here:
 3. `helm install --wait -n metallb-system metallb metallb/metallb`
 4. `k apply -f metallb/pool.yaml`
 
+## Install tinkerbell
 
+from within tinkerbell/charts/tinkerbell, run
+
+```shell
+helm dependency build stack/
+trusted_proxies=$(kubectl get nodes -o jsonpath='{.items[*].spec.podCIDR}' | tr ' ' ',')
+helm upgrade --install stack-release stack/ --create-namespace --namespace tink-system --wait --set "boots.trustedProxies=${trusted_proxies}" --set "hegel.trustedProxies=${trusted_proxies}" --set "stack.kubevip.enabled=false"
+```
+
+Make sure to set 
 
 ## Install linkerd with argocd
 
