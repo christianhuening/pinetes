@@ -2,7 +2,7 @@ apiVersion: "tinkerbell.org/v1alpha1"
 kind: Template
 metadata:
   name: ubuntu-focal
-  namespace: default
+  namespace: tink-system
 spec:
   data: |
     version: "0.1"

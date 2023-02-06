@@ -4,7 +4,7 @@ apiVersion: "tinkerbell.org/v1alpha1"
 kind: Hardware
 metadata:
   name: node-01
-  namespace: default 
+  namespace: tink-system 
 spec:
   disks:
     - device: /dev/sda

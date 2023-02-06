@@ -3,7 +3,7 @@ apiVersion: "tinkerbell.org/v1alpha1"
 kind: Workflow
 metadata:
   name: wf-node-01
-  namespace: default
+  namespace: tink-system
 spec:
   templateRef: ubuntu-focal
   hardwareRef: node-01
