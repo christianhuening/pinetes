@@ -1,0 +1,1 @@
+helm upgrade --install --namespace nexus -f nexus/values.yaml nexus-repo sonatype/nexus-repository-manager

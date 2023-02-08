@@ -5,7 +5,7 @@ using quickstart guide from: https://argo-cd.readthedocs.io/en/stable/getting_st
 ```shell
 kubectl create namespace argocd
 kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-kubectl -n argocd set image deploy/argocd-applicationset-controller argocd-applicationset-controller=ghcr.io/jr64/argocd-applicationset:v0.4.0
+kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
 ```
 
 ```shell
