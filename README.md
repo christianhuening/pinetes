@@ -8,13 +8,12 @@ This is about installing a k8s cluster on a set of raspberry pies with k3s and c
 2. install them with Ubuntu Server 64bit
 3. set new hostname: `hostnamectl set-hostname node-000X.pinetes`
 3. install docker: `sudo apt install -y docker.io`
-4. update packages and everything: `sudo apt update & sudo apt upgrade -y`
+4. update packages and everything: `sudo apt update && sudo apt upgrade -y`
 6. `sudo sed -i '$ s/$/ cgroup_enable=cpuset cgroup_enable=memory cgroup_memory=1 swapaccount=1/' /boot/firmware/cmdline.txt`
-7. activate vxlan (only on newer ubuntus, if `modprobe vxlan` returns error): `sudo apt install linux-modules-extra-raspi`
-8. reboot machine for good measure: `sudo reboot`
+7. activate vxlan (only on newer ubuntus, if `modprobe vxlan` returns error): `sudo apt install linux-modules-extra-raspi && sudo reboot`
 
 for an initial install, proceed here:
-1. (from: https://docs.cilium.io/en/stable/installation/k3s/): install k3s without flannel: `curl -sfL https://get.k3s.io | K3S_NODE_NAME=master-0001.pinetes INSTALL_K3S_EXEC='--disable servicelb --flannel-backend=none --disable-network-policy --disable-kube-proxy --write-kubeconfig-mode "0644" --resolv-conf /run/systemd/resolve/resolv.conf' sh -`
+1. (from: https://docs.cilium.io/en/stable/installation/k3s/): install k3s without flannel and kube-proxy: `curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL=latest K3S_NODE_NAME=master-0001.pinetes INSTALL_K3S_EXEC='--disable servicelb --flannel-backend=none --disable-network-policy --disable-kube-proxy --write-kubeconfig-mode "0644" --resolv-conf /run/systemd/resolve/resolv.conf' sh -`
 (resolv.conf bit was from [here](https://github.com/k3s-io/k3s/issues/4087#issuecomment-929374460), since coredns wouldn't get ready. More also [here](https://github.com/coredns/coredns/blob/master/plugin/loop/README.md#troubleshooting-loops-in-kubernetes-clusters))
 (note that we disable the k3s klipper LB in favour of later installing metalLB)
 
@@ -25,13 +24,13 @@ for an initial install, proceed here:
     ```
 
 for worker nodes here:
-1. Add Worker Nodes: Repeat steps 1-8 and then run the following:
+2. Add Worker Nodes: Repeat steps 1-8 and then run the following:
    1. Fetch the Join token from node-0001: `sudo cat /var/lib/rancher/k3s/server/node-token` and save it as NODE_TOKEN
    2. `curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL=latest K3S_URL='https://master-0001.pinetes:6443' K3S_TOKEN=${NODE_TOKEN} sh -`
-```
-export NODE_TOKEN=K10af90ecacb4d96830f67e0a1b389c09c9bf47f8eaac1fec94bb6c27acf09ba44b::server:b8369c2bb4e5c75a28da75a778f1cc0b
-curl -sfL https://get.k3s.io | K3S_URL='https://master-0001.pinetes:6443' K3S_TOKEN=${NODE_TOKEN} sh -
-```
+
+3. Install Cilium: `cilium install --helm-set=kubeProxyReplacement=strict --helm-set=k8sServiceHost=master-0001.pinetes --helm-set=k8sServicePort=6443`
+   Note that the k8sServiceHost and Port params are needed because we don't have kube-proxy installed and hence the k8s service in the cluster is disfunctional until Cilium is up and running
+
 ## Install MetalLB
 
 1. `helm repo add metallb https://metallb.github.io/metallb`
