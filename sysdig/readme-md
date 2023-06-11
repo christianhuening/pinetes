@@ -1,0 +1,10 @@
+helm repo add sysdig https://charts.sysdig.com
+helm repo update
+helm install sysdig-agent --namespace sysdig-agent --create-namespace \
+    --set global.sysdig.accessKey=704c6242-1d00-4d96-9492-538535491312 \
+    --set global.sysdig.region=eu1 \
+    --set nodeAnalyzer.secure.vulnerabilityManagement.newEngineOnly=true \
+    --set global.kspm.deploy=true \
+    --set nodeAnalyzer.nodeAnalyzer.benchmarkRunner.deploy=false \
+    --set global.clusterConfig.name=pinetes \
+    sysdig/sysdig-deploy
