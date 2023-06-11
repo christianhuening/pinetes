@@ -20,7 +20,7 @@ for an initial install, proceed here:
 2. fetch Kubeconfig:
     ```shell
     scp ubuntu@master-0001.pinetes:/etc/rancher/k3s/k3s.yaml ./pinetes-kubeconfig
-    gsed -i 's/127.0.0.1/master-0001.pinetes/g' pinetes-kubeconfig
+    gsed -i 's/127.0.0.1/master-0001.pinetes/g' pinetes-kubeconfig && chmod 600 pinetes-kubeconfig
     ```
 
 for worker nodes here:
@@ -28,7 +28,7 @@ for worker nodes here:
    1. Fetch the Join token from node-0001: `sudo cat /var/lib/rancher/k3s/server/node-token` and save it as NODE_TOKEN
    2. `curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL=latest K3S_URL='https://master-0001.pinetes:6443' K3S_TOKEN=${NODE_TOKEN} sh -`
 
-3. Install Cilium: `cilium install --helm-set=kubeProxyReplacement=strict --helm-set=k8sServiceHost=master-0001.pinetes --helm-set=k8sServicePort=6443`
+3. Install Cilium: `cilium install --helm-set=kubeProxyReplacement=strict --helm-set=k8sServiceHost=master-0001.pinetes --helm-set=k8sServicePort=6443 --helm-set=enable-bgp-control-plane=true`
    Note that the k8sServiceHost and Port params are needed because we don't have kube-proxy installed and hence the k8s service in the cluster is disfunctional until Cilium is up and running
 
 ## Install MetalLB
@@ -37,24 +37,6 @@ for worker nodes here:
 2. `k create ns metallb-system`
 3. `helm install --wait -n metallb-system metallb metallb/metallb`
 4. `k apply -f metallb/pool.yaml`
-
-## Install tinkerbell
-
-from within tinkerbell/charts/tinkerbell, run
-
-```shell
-helm dependency build stack/
-trusted_proxies=$(kubectl get nodes -o jsonpath='{.items[*].spec.podCIDR}' | tr ' ' ',')
-helm upgrade --install stack-release stack/ --create-namespace --namespace tink-system --wait --set "boots.trustedProxies=${trusted_proxies}" --set "hegel.trustedProxies=${trusted_proxies}" --set "stack.kubevip.enabled=false"
-```
-
-We disable `kubevip` because metalLB is used as Load Balancer and working just fine.
-
-### Enable flatcar image
-
-Basically follow this guide: https://tinkerbell.org/examples/flatcar-container-linux/
-But build the image for multiarch:
-`docker buildx build --platform linux/arm/v7,linux/arm64/v8,linux/amd64 -t $TINKERBELL_HOST_IP/flatcar-install .`
 
 ## Install linkerd with argocd
 
