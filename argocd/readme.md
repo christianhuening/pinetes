@@ -11,4 +11,3 @@ kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}
 ```shell
 export ARGOCD_OPTS='--port-forward-namespace argocd'
 ```
-
