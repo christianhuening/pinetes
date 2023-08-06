@@ -1,12 +1,16 @@
 # Notes
 
-using quickstart guide from: https://argo-cd.readthedocs.io/en/stable/getting_started/
+This is installing argo-cd using the community provided chart from here: https://github.com/argoproj/argo-helm/tree/main/charts/argo-cd
 
 ```shell
-kubectl create namespace argocd
-kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
+helm repo add argo-cd https://argoproj.github.io/argo-helm
+helm repo update
+# install CRDs outside of chart
+kubectl apply -k "https://github.com/argoproj/argo-cd/manifests/crds?ref=v2.7.10"
+kubectl create ns argocd
+helm install --upgrade argo-cd argo-cd/argo-cd -f values.yaml
 ```
+
 
 ```shell
 export ARGOCD_OPTS='--port-forward-namespace argocd'
