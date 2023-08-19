@@ -9,7 +9,7 @@ nodeAnalyzer:
       settings:
         eveEnabled: true
     benchmarkRunner:
-      deploy: false
+      deploy: true
 global:
   sysdig:
     accessKey: 704c6242-1d00-4d96-9492-538535491312

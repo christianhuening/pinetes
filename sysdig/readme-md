@@ -2,4 +2,5 @@ helm repo add sysdig https://charts.sysdig.com
 helm repo update
 curl -o "/tmp/sysdig_public.gpg" "https://charts.sysdig.com/public.gpg"
 gpg --import /tmp/sysdig_public.gpg
-helm upgrade --verify --keyring ~/.gnupg/trustdb.gpg --install -n sysdig-agent sysdig-agent sysdig/sysdig-deploy -f values.yaml
+gpg --export >~/.gnupg/pubring.gpg
+helm upgrade --verify --install -n sysdig-agent sysdig-agent sysdig/sysdig-deploy -f values.yaml
