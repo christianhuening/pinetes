@@ -1,0 +1,20 @@
+nodeAnalyzer:
+  secure:
+    vulnerabilityManagement:
+      newEngineOnly: true
+  nodeAnalyzer:
+    hostScanner:
+      scanOnStart: true
+    runtimeScanner:
+      settings:
+        eveEnabled: true
+    benchmarkRunner:
+      deploy: false
+global:
+  sysdig:
+    accessKey: 704c6242-1d00-4d96-9492-538535491312
+    region: eu1
+  kspm:
+    deploy: true
+  clusterConfig:
+    name: pinetes
