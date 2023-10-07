@@ -1,0 +1,24 @@
+spec:
+  template:
+    spec:
+      volumes:
+        - name: tftp-folder
+          emptyDir: {}
+      initContainers:
+      - image: ghcr.io/christianhuening/raspberrypi4-uefi:v1.6.0-alpha.0-21-g34f3c41
+        imagePullPolicy: Always
+        name: tftp-folder-setup
+        command:
+          - cp
+        args:
+          - -r
+          - /tftp
+          - /var/lib/sidero/
+        volumeMounts:
+          - mountPath: /var/lib/sidero/tftp
+            name: tftp-folder
+      containers:
+      - name: manager
+        volumeMounts:
+          - mountPath: /var/lib/sidero/tftp
+            name: tftp-folder
