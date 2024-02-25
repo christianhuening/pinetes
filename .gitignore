@@ -2,3 +2,4 @@ kubeconfig
 pinetes-kubeconfig
 .dccache
 pinetes-kubeconfig
+linkerd-certs

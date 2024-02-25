@@ -1,0 +1,25 @@
+apiVersion: linkerd.buoyant.io/v1alpha1
+kind: ControlPlane
+metadata:
+  name: linkerd-control-plane
+spec:
+  components:
+    linkerd:
+      version: enterprise-2.15.0
+      license: eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJQcm9kdWN0Ijoib3BlcmF0b3IiLCJWZXJzaW9uIjoxLCJNYW5hZ2VkQ29udHJvbFBsYW5lRW5hYmxlZCI6dHJ1ZSwiTWFuYWdlZERhdGFQbGFuZUVuYWJsZWQiOnRydWUsIkVudGVycHJpc2VFbmFibGVkIjp0cnVlLCJIQVpMRW5hYmxlZCI6ZmFsc2UsIkZJUFNFbmFibGVkIjpmYWxzZSwiUGF0Y2hSZWxlYXNlc0VuYWJsZWQiOmZhbHNlLCJpc3MiOiJCdW95YW50IEluYyIsInN1YiI6ImxpY2Vuc2UiLCJhdWQiOiJodWVuaXgiLCJleHAiOjE3NDAzMzg2NDh9.PA799WGIOT-ArPCY-D5ptggxeX36s438qgLMHPDhwUF4aD8WOa0gD9-YH-nu8cMAYHoEb0aEDYbVLVJsENxKNA
+      controlPlaneConfig:
+        identityTrustAnchorsPEM: |
+          -----BEGIN CERTIFICATE-----
+          MIIBjTCCATOgAwIBAgIQVhHP0qN10810MX2YyYqmNDAKBggqhkjOPQQDAjAlMSMw
+          IQYDVQQDExpyb290LmxpbmtlcmQuY2x1c3Rlci5sb2NhbDAeFw0yNDAyMjUwOTI3
+          NDVaFw0zNDAyMjIwOTI3NDVaMCUxIzAhBgNVBAMTGnJvb3QubGlua2VyZC5jbHVz
+          dGVyLmxvY2FsMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEq3cGZHzhXWOl6W89
+          zR1bIRCUyxD7XA9FEpv/AfYDP9USNqKkMHzoYm9glxzy1/An/7ABKYOffEIIkRG1
+          34vHr6NFMEMwDgYDVR0PAQH/BAQDAgEGMBIGA1UdEwEB/wQIMAYBAf8CAQEwHQYD
+          VR0OBBYEFD3c1YvvTbwhiamAi5nVGJs7/fa7MAoGCCqGSM49BAMCA0gAMEUCIHy2
+          1SnVz/oZd9zjwUar8OFF2TIhbVvBjt2pYv9XHMxOAiEAvLAClc63uQpxXtCZYTSu
+          WSbbu8DAISxkmD1HoMO7UkI=
+          -----END CERTIFICATE-----
+        identity:
+          issuer:
+            scheme: kubernetes.io/tls
