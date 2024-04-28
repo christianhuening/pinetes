@@ -6,9 +6,9 @@ This is installing argo-cd using the community provided chart from here: https:/
 helm repo add argo-cd https://argoproj.github.io/argo-helm
 helm repo update
 # install CRDs outside of chart
-kubectl apply -k "https://github.com/argoproj/argo-cd/manifests/crds?ref=v2.8.0"
+kubectl apply -k "https://github.com/argoproj/argo-cd/manifests/crds?ref=v2.10.8"
 kubectl create ns argocd
-helm upgrade --install -n argocd argo-cd argo-cd/argo-cd -f values.yaml
+helm upgrade --install -n argocd argo-cd argo-cd/argo-cd -f argocd/values.yaml
 ```
 
 
