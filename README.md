@@ -11,9 +11,10 @@ This is about installing a k8s cluster on a set of raspberry pies with k3s and c
 5. (optional) install wireguard for cilium transparent link encryption: `sudo apt install wireguard`
 
 for an initial install, proceed here:
-1. (from: https://docs.cilium.io/en/stable/installation/k3s/): install k3s without flannel and kube-proxy: `curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL=latest K3S_NODE_NAME=master-0001.pinetes INSTALL_K3S_EXEC='--disable=servicelb --flannel-backend=none --disable-network-policy --disable-kube-proxy --write-kubeconfig-mode "0644" --resolv-conf /run/systemd/resolve/resolv.conf' sh -`
+1. (from: https://docs.cilium.io/en/stable/installation/k3s/): install k3s without flannel and kube-proxy: `curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL=latest K3S_NODE_NAME=master-0001.pinetes INSTALL_K3S_EXEC='--disable=servicelb --disable=traefik --flannel-backend=none --disable-network-policy --disable-kube-proxy --write-kubeconfig-mode "0644" --resolv-conf /run/systemd/resolve/resolv.conf --cluster-cidr=10.42.0.0/16,2001:cafe:42::/56 --service-cidr=10.43.0.0/16,2001:cafe:43::/112' sh -`
 (resolv.conf bit was from [here](https://github.com/k3s-io/k3s/issues/4087#issuecomment-929374460), since coredns wouldn't get ready. More also [here](https://github.com/coredns/coredns/blob/master/plugin/loop/README.md#troubleshooting-loops-in-kubernetes-clusters))
 (note that we disable the k3s klipper LB in favour of later installing metalLB)
+(note that this creates a single-stack IPv6 cluster)
 
 2. fetch Kubeconfig:
     ```shell
@@ -36,9 +37,21 @@ for worker nodes here:
 3. `helm install --wait -n metallb-system metallb metallb/metallb`
 4. `k apply -f metallb/pool.yaml`
 
-## Install Cert-Manager DuckDNS
+## Install Cert-Manager + DuckDNS
 
-1. Install cert-manager
+1. install cert-manager:
+
+```bash
+helm repo add jetstack https://charts.jetstack.io
+helm repo update
+kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.14.2/cert-manager.crds.yaml
+helm install \
+  cert-manager jetstack/cert-manager \
+  --namespace cert-manager \
+  --create-namespace \
+  --version v1.14.2
+```
+
 2. Register at DuckDNS.org and fetch the Token shown after login
 2. Install duckdns webhook wby using the DuckDNS Token
 
@@ -47,6 +60,10 @@ helm install cert-manager-webhook-duckdns --namespace cert-manager --set duckdns
 ```
 
 Deploy an Ingress with an annotation of `cert-manager.io/cluster-issuer: cert-manager-webhook-duckdns-production`
+
+## Install traefik
+
+1. `helm install -f ./traefik/myvalues.yaml --create-namespace -n traefik traefik traefik/traefik`
 
 ## Install linkerd with argocd
 
