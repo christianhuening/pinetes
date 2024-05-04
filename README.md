@@ -36,6 +36,18 @@ for worker nodes here:
 3. `helm install --wait -n metallb-system metallb metallb/metallb`
 4. `k apply -f metallb/pool.yaml`
 
+## Install Cert-Manager DuckDNS
+
+1. Install cert-manager
+2. Register at DuckDNS.org and fetch the Token shown after login
+2. Install duckdns webhook wby using the DuckDNS Token
+
+```shell
+helm install cert-manager-webhook-duckdns --namespace cert-manager --set duckdns.token='TOKEN_DUCKDNS' --set clusterIssuer.production.create=true --set clusterIssuer.staging.create=true --set clusterIssuer.email='MYMAIL' --set logLevel=2 ./deploy/cert-manager-webhook-duckdns
+```
+
+Deploy an Ingress with an annotation of `cert-manager.io/cluster-issuer: cert-manager-webhook-duckdns-production`
+
 ## Install linkerd with argocd
 
 Guide: <https://linkerd.io/2.12/tasks/gitops/>

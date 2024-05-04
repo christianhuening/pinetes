@@ -7,10 +7,25 @@ redis-ha:
 controller:
   replicas: 1
 
+global:
+  domain: argocd-pinetes.duckdns.org
+
+configs:
+  params:
+    server.insecure: true
+
 server:
   insecure: true
   ingress:
     enabled: true
+    ingressClassName: traefik
+    annotations:
+      cert-manager.io/cluster-issuer: cert-manager-webhook-duckdns-production
+    extraTls:
+      - hosts:
+        - argocd-pinetes.duckdns.org
+        # Based on the ingress controller used secret might be optional
+        secretName: wildcard-tls
   autoscaling:
     enabled: true
     minReplicas: 1
