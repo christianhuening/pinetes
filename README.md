@@ -65,6 +65,17 @@ Deploy an Ingress with an annotation of `cert-manager.io/cluster-issuer: cert-ma
 
 1. `helm install -f ./traefik/myvalues.yaml --create-namespace -n traefik traefik traefik/traefik`
 
+## Install ArgoCD
+
+```shell
+helm repo add argo-cd https://argoproj.github.io/argo-helm
+helm repo update
+# install CRDs outside of chart
+kubectl apply -k "https://github.com/argoproj/argo-cd/manifests/crds?ref=v2.10.8"
+kubectl create ns argocd
+helm upgrade --install --create-namespace -n argocd argo-cd argo-cd/argo-cd -f argocd/values.yaml
+```
+
 ## Install linkerd with argocd
 
 Guide: <https://linkerd.io/2.12/tasks/gitops/>
@@ -73,8 +84,17 @@ Guide: <https://linkerd.io/2.12/tasks/gitops/>
 
 To uninstall K3s from a server node, run:
 
-`/usr/local/bin/k3s-uninstall.sh`
+```shell
+/usr/local/bin/k3s-uninstall.sh
+```
 
 To uninstall K3s from an agent node, run:
 
-`/usr/local/bin/k3s-agent-uninstall.sh`
+```shell
+sudo ip link delete cilium_host
+sudo ip link delete cilium_net
+sudo ip link delete cilium_vxlan
+sudo iptables-save | grep -iv cilium | iptables-restore
+sudo ip6tables-save | grep -iv cilium | ip6tables-restore
+/usr/local/bin/k3s-agent-uninstall.sh
+```
