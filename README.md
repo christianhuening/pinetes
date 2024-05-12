@@ -78,7 +78,14 @@ helm upgrade --install --create-namespace -n argocd argo-cd argo-cd/argo-cd -f a
 
 ## Install linkerd with argocd
 
-Guide: <https://linkerd.io/2.12/tasks/gitops/>
+```shell
+helm upgrade --install linkerd-buoyant \
+  --create-namespace \
+  --namespace linkerd-buoyant \
+  --set buoyantCloudEnabled=false \
+  --set license=$BUOYANT_LICENSE \
+  linkerd-buoyant/linkerd-buoyant
+```
 
 ## Clean Up
 
