@@ -3,3 +3,4 @@ pinetes-kubeconfig
 .dccache
 pinetes-kubeconfig
 linkerd-certs
+secrets.yaml
