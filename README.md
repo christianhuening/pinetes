@@ -1,13 +1,13 @@
 # Pinetes
 
-This is about installing a k8s cluster on a set of raspberry pies with k3s or talos and cilium
+This is about installing a k8s cluster on a set of raspberry pies with talos and cilium. The k3s installation is kept below under an archive setting for reference
 
 ## Talos Setup
 
 0. Install Talos on rPI4: <https://www.talos.dev/v1.7/talos-guides/install/single-board-computers/rpi_generic/>
 1. Install `talosctl`: `curl -sL https://talos.dev/install | sh`
 2. Generate secrets: `talosctl gen secrets`
-3. Generate configuration: `talosctl gen config pinetes https://192.168.178.73:6443 --with-secrets ./secrets.yaml --install-disk /dev/mmcblk0 --config-patch @patch.yaml`
+3. Generate configuration: `talosctl gen config pinetes https://192.168.178.203:6443 --with-secrets ./secrets.yaml --install-disk /dev/mmcblk0 --config-patch @patch.yaml`
 4. Initialize the cluster control plane by running `talosctl apply-config --insecure  -n 192.168.178.73 -e 192.168.178.73 --file controlplane.yaml`
 5. Initialize the worker nodes:
 
@@ -42,36 +42,6 @@ This is about installing a k8s cluster on a set of raspberry pies with k3s or ta
     --set=k8sServicePort=7445
   ```
 
-## K3s Setup
-
-1. get Pi's (v4 8GB)
-2. install them with Ubuntu Server 64bit
-3. set new hostname: `hostnamectl set-hostname node-000X.pinetes`
-4. update packages and everything: `sudo apt update && sudo apt upgrade -y`
-5. (optional) install wireguard for cilium transparent link encryption: `sudo apt install wireguard`
-
-for an initial install, proceed here:
-
-1. (from: <https://docs.cilium.io/en/stable/installation/k3s/>): install k3s without flannel and kube-proxy: `curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL=latest K3S_NODE_NAME=192.168.178.73 INSTALL_K3S_EXEC='--disable=servicelb --disable=traefik --flannel-backend=none --disable-network-policy --disable-kube-proxy --write-kubeconfig-mode "0644" --resolv-conf /run/systemd/resolve/resolv.conf --cluster-cidr=10.42.0.0/16,2001:cafe:42::/56 --service-cidr=10.43.0.0/16,2001:cafe:43::/112' sh -`
-(resolv.conf bit was from [here](https://github.com/k3s-io/k3s/issues/4087#issuecomment-929374460), since coredns wouldn't get ready. More also [here](https://github.com/coredns/coredns/blob/master/plugin/loop/README.md#troubleshooting-loops-in-kubernetes-clusters))
-(note that we disable the k3s klipper LB in favour of later installing metalLB)
-(note that this creates a single-stack IPv6 cluster)
-
-2. fetch Kubeconfig:
-
-    ```shell
-    scp ubuntu@192.168.178.73:/etc/rancher/k3s/k3s.yaml ./pinetes-kubeconfig
-    gsed -i 's/127.0.0.1/192.168.178.73/g' pinetes-kubeconfig && chmod 600 pinetes-kubeconfig
-    ```
-
-for worker nodes here:
-2. Add Worker Nodes: Repeat steps 1-8 and then run the following:
-
-   1. Fetch the Join token from node-0001: `sudo cat /var/lib/rancher/k3s/server/node-token` and save it as NODE_TOKEN
-   2. `curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL=latest K3S_URL='https://192.168.178.73:6443' K3S_TOKEN=${NODE_TOKEN} sh -`
-
-   3. Install Cilium: `cilium install --helm-set=kubeProxyReplacement=strict  --set ipv6.enabled=true --helm-set=k8sServiceHost=192.168.178.73 --helm-set=k8sServicePort=6443 --set encryption.enabled=true --set encryption.type=wireguard --set encryption.nodeEncryption=true`
-   Note that the k8sServiceHost and Port params are needed because we don't have kube-proxy installed and hence the k8s service in the cluster is disfunctional until Cilium is up and running
 
 ## Extensions
 
@@ -150,3 +120,37 @@ sudo iptables-save | grep -iv cilium | iptables-restore
 sudo ip6tables-save | grep -iv cilium | ip6tables-restore
 /usr/local/bin/k3s-agent-uninstall.sh
 ```
+
+
+# Archive
+
+## K3s Setup
+
+1. get Pi's (v4 8GB)
+2. install them with Ubuntu Server 64bit
+3. set new hostname: `hostnamectl set-hostname node-000X.pinetes`
+4. update packages and everything: `sudo apt update && sudo apt upgrade -y`
+5. (optional) install wireguard for cilium transparent link encryption: `sudo apt install wireguard`
+
+for an initial install, proceed here:
+
+1. (from: <https://docs.cilium.io/en/stable/installation/k3s/>): install k3s without flannel and kube-proxy: `curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL=latest K3S_NODE_NAME=192.168.178.73 INSTALL_K3S_EXEC='--disable=servicelb --disable=traefik --flannel-backend=none --disable-network-policy --disable-kube-proxy --write-kubeconfig-mode "0644" --resolv-conf /run/systemd/resolve/resolv.conf --cluster-cidr=10.42.0.0/16,2001:cafe:42::/56 --service-cidr=10.43.0.0/16,2001:cafe:43::/112' sh -`
+(resolv.conf bit was from [here](https://github.com/k3s-io/k3s/issues/4087#issuecomment-929374460), since coredns wouldn't get ready. More also [here](https://github.com/coredns/coredns/blob/master/plugin/loop/README.md#troubleshooting-loops-in-kubernetes-clusters))
+(note that we disable the k3s klipper LB in favour of later installing metalLB)
+(note that this creates a single-stack IPv6 cluster)
+
+2. fetch Kubeconfig:
+
+    ```shell
+    scp ubuntu@192.168.178.73:/etc/rancher/k3s/k3s.yaml ./pinetes-kubeconfig
+    gsed -i 's/127.0.0.1/192.168.178.73/g' pinetes-kubeconfig && chmod 600 pinetes-kubeconfig
+    ```
+
+for worker nodes here:
+2. Add Worker Nodes: Repeat steps 1-8 and then run the following:
+
+   1. Fetch the Join token from node-0001: `sudo cat /var/lib/rancher/k3s/server/node-token` and save it as NODE_TOKEN
+   2. `curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL=latest K3S_URL='https://192.168.178.73:6443' K3S_TOKEN=${NODE_TOKEN} sh -`
+
+   3. Install Cilium: `cilium install --helm-set=kubeProxyReplacement=strict  --set ipv6.enabled=true --helm-set=k8sServiceHost=192.168.178.73 --helm-set=k8sServicePort=6443 --set encryption.enabled=true --set encryption.type=wireguard --set encryption.nodeEncryption=true`
+   Note that the k8sServiceHost and Port params are needed because we don't have kube-proxy installed and hence the k8s service in the cluster is disfunctional until Cilium is up and running
